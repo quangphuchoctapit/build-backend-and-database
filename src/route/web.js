@@ -10,6 +10,8 @@ let initWebRoutes = app => {
     router.get("/hoidanit", (req, res) => {
         return res.send("Hello world with ok hoidanit")
     })
+    router.get('/crud', homeController.getCRUD)
+    router.post('/post-crud', homeController.postCRUD)
     return app.use("/", router)
 }
 
