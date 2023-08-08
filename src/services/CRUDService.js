@@ -32,7 +32,7 @@ let createNewUser = async (data) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let hashUserPassword = await bcrypt.hashSync("password", salt);
+            let hashUserPassword = await bcrypt.hashSync(password, salt);
             resolve(hashUserPassword);
         } catch (e) {
             reject(e)
