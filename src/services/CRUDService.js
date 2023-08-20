@@ -24,9 +24,6 @@ let createNewUser = async (data) => {
             reject(e)
         }
     })
-    console.log('data from service ')
-    console.log(data)
-    console.log(hashUserPasswordFromBcrypt)
 }
 
 let hashUserPassword = (password) => {
