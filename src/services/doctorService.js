@@ -200,10 +200,63 @@ const bulkCreateSchedule = (data) => {
     })
 }
 
+const getScheduleById = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing inputId'
+                })
+            } else {
+                let schedule = await db.Schedule.findAll({
+                    where: { doctorId: inputId },
+                    // attributes: { exclude: ['password', 'image'] }
+                })
+                resolve({
+                    errCode: 0,
+                    data: schedule
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+const getScheduleDoctorByDate = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'missing param'
+                })
+            } else {
+                let dataSchedule = await db.Schedule.findAll({
+                    where: {
+                        doctorId, date
+                    }
+                })
+                if (!dataSchedule) dataSchedule = []
+                resolve({
+                    errCode: 0,
+                    data: dataSchedule
+                })
+            }
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome,
     getAllDoctors,
     saveDetailInfoDoctor,
     getDetailDoctorById,
-    bulkCreateSchedule
+    bulkCreateSchedule,
+    getScheduleById,
+    getScheduleDoctorByDate
 }
