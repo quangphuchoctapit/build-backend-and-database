@@ -51,14 +51,17 @@ const getAllDoctors = () => {
 const saveDetailInfoDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(inputData.contentHTML)
             if (!inputData.doctorId || !inputData.contentHTML || !inputData.contentMarkdown
-                || !inputData.action) {
+                || !inputData.action || !inputData.selectedPrice || !inputData.selectedPayment
+                || !inputData.selectedProvince || !inputData.selectedNameClinic
+                || !inputData.selectedAddressClinic || !inputData.note
+            ) {
                 resolve({
                     errCode: 1,
                     errMessage: 'missing parsams!'
                 })
             } else {
+                //upsert to markdown table
                 if (inputData.action === 'CREATE') {
                     await db.Markdown.create({
                         contentHTML: inputData.contentHTML,
@@ -81,6 +84,39 @@ const saveDetailInfoDoctor = (inputData) => {
                         await doctorMarkdown.save()
                     }
                 }
+
+
+                //upsert to doctor_info table
+                let doctorInfo = await db.Doctor_Info.findOne({
+                    where: {
+                        doctorId: inputData.doctorId,
+                    },
+                    raw: false
+                })
+                if (doctorInfo) {
+                    //update
+                    doctorInfo.doctorId = inputData.doctorId;
+                    doctorInfo.priceId = inputData.selectedPrice;
+                    doctorInfo.paymentId = inputData.selectedPayment;
+                    doctorInfo.provinceId = inputData.selectedProvince;
+                    doctorInfo.addressClinic = inputData.selectedAddressClinic;
+                    doctorInfo.nameClinic = inputData.selectedNameClinic;
+                    doctorInfo.note = inputData.note;
+                    await doctorInfo.save()
+                }
+                else {
+                    //create
+                    await db.Doctor_Info.create({
+                        doctorId: inputData.doctorId,
+                        priceId: inputData.contentHTML,
+                        paymentId: inputData.contentMarkdown,
+                        provinceId: inputData.description,
+                        addressClinic: inputData.doctorId,
+                        nameClinic: inputData.contentMarkdown,
+                        note: inputData.description
+                    })
+                }
+
                 resolve({
                     errCode: 0,
                     errMessage: 'Save details succeeded'
