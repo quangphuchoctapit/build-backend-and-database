@@ -337,6 +337,58 @@ const getExtraInfoDoctorById = (doctorId) => {
     })
 }
 
+const getProfileDoctorById = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'missing param (doctorID)'
+                })
+            } else {
+                let data = await db.User.findOne({
+                    where: { id: inputId },
+                    raw: true,
+                    nest: true,
+                    attributes: {
+                        exclude: ['password']
+                    },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: ['description', 'contentHTML', 'contentMarkdown']
+                        },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueVi', 'valueEn'] },
+                        {
+                            model: db.Doctor_Info, attributes: {
+                                exclude: ['id', 'doctorId']
+                            },
+                            include: [
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi', 'valueEn'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi', 'valueEn'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueVi', 'valueEn'] }
+                            ]
+                        }
+                    ],
+                    raw: true,
+                    nest: true
+                })
+                if (data && data.image) {
+                    data.image = new Buffer(data.image, 'base64').toString('binary')
+                }
+                if (!data) data = {}
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+        } catch (e) {
+            reject(e)
+            console.log('reject error', e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome,
     getAllDoctors,
@@ -345,5 +397,6 @@ module.exports = {
     bulkCreateSchedule,
     getScheduleById,
     getScheduleDoctorByDate,
-    getExtraInfoDoctorById
+    getExtraInfoDoctorById,
+    getProfileDoctorById
 }
