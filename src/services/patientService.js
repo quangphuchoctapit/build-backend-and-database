@@ -8,7 +8,7 @@ const postBookingAppointment = async (data) => {
             if (!data.email || !data.timeType || !data.doctorId || !data.date) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'Missing param (!data.email || !data.timeType || !data.doctorID || !data.date)'
+                    errMessage: 'Missing param (!data.email || !data.timeType || !data.doctorId || !data.date)'
                 })
             } else {
                 let user = await db.User.findOrCreate({
