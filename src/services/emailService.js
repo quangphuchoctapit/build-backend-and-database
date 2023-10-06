@@ -30,7 +30,7 @@ let getBodyHTMLEmail = (dataReceiver) => {
         <h4>Time: ${dataReceiver.timeString}</h4>
         <h4>Doctor: ${dataReceiver.doctorName}</h4>
         <p>If the above information is true, please click on the below link to proceed and finish your booking reservation.</p>
-        <a href="localhost/phpstepbystepyt/display.php">Click here</a>
+        <a href='${dataReceiver.redirectLink}'>Click here</a><br><hr/>
         `
         return result
     }
@@ -42,7 +42,7 @@ let getBodyHTMLEmail = (dataReceiver) => {
         <h4>Thời gian: ${dataReceiver.timeString}</h4>
         <h4>Bác sĩ: ${dataReceiver.doctorName}</h4>
         <p>Nếu thông tin trên là đúng sự thật, vui lòng click vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám.</p>
-        <a href="localhost/phpstepbystepyt/display.php">Click here</a><br><hr/>
+        <a href='${dataReceiver.redirectLink}'>Click here</a><br><hr/>
         `
         return result
     }

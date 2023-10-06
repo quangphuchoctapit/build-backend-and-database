@@ -9,6 +9,17 @@ const postBookingAppointment = async (req, res) => {
     }
 }
 
+const postVerifyBookingAppointment = async (req, res) => {
+    try {
+        let response = await patientService.postVerifyBookingAppointment(req.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 module.exports = {
-    postBookingAppointment
+    postBookingAppointment,
+    postVerifyBookingAppointment
+
 }
