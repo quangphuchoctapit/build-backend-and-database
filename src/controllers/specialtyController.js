@@ -10,6 +10,15 @@ const createNewSpecialty = async (req, res) => {
     }
 }
 
+const getAllSpecialties = async (req, res) => {
+    try {
+        let response = await specialtyService.getAllSpecialties()
+        return res.status(200).json(response)
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 module.exports = {
-    createNewSpecialty
+    createNewSpecialty, getAllSpecialties
 }
