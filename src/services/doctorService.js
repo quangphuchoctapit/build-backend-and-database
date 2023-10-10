@@ -48,17 +48,34 @@ const getAllDoctors = () => {
     })
 }
 
+const checkMissingWhatParam = inputData => {
+    let arrParams = ['doctorId', 'contentHTML', 'contentMarkdown',
+        'action', 'selectedPayment', 'selectedProvince',
+        'selectedNameClinic', 'selectedAddressClinic',
+        'note', 'specialtyId']
+    let isValid = true
+    let missingParam = ''
+    for (let i = 0; i < arrParams.length; i++) {
+        if (!inputData[arrParams[i]]) {
+            isValid = false
+            missingParam = arrParams[i]
+            break
+        }
+    }
+    return {
+        isValid: isValid,
+        missingParam: missingParam
+    }
+}
+
 const saveDetailInfoDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.contentHTML || !inputData.contentMarkdown
-                || !inputData.action || !inputData.selectedPrice || !inputData.selectedPayment
-                || !inputData.selectedProvince || !inputData.selectedNameClinic
-                || !inputData.selectedAddressClinic || !inputData.note
-            ) {
+            let checkMissingParam = checkMissingWhatParam(inputData)
+            if (checkMissingParam.isValid === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'missing parsams!'
+                    errMessage: `missing parsam: ${checkMissingParam.missingParam}!`
                 })
             } else {
                 //upsert to markdown table
@@ -68,6 +85,14 @@ const saveDetailInfoDoctor = (inputData) => {
                         contentMarkdown: inputData.contentMarkdown,
                         description: inputData.description,
                         doctorId: inputData.doctorId,
+                        provinceId: inputData.selectedProvince,
+                        paymentId: inputData.selectedPayment,
+                        priceId: inputData.selectedPrice,
+                        note: inputData.note,
+                        addressClinic: inputData.selectedAddressClinic,
+                        nameClinic: inputData.selectedNameClinic,
+                        specialtyId: inputData.specialtyId,
+                        clinicId: inputData.clinicId
                     })
                 } else if (inputData.action === 'EDIT') {
                     let doctorMarkdown = await db.Markdown.findOne({
@@ -102,6 +127,8 @@ const saveDetailInfoDoctor = (inputData) => {
                     doctorInfo.addressClinic = inputData.selectedAddressClinic;
                     doctorInfo.nameClinic = inputData.selectedNameClinic;
                     doctorInfo.note = inputData.note;
+                    doctorInfo.specialtyId = inputData.specialtyId;
+                    doctorInfo.clinicId = inputData.clinicId
                     await doctorInfo.save()
                 }
                 else {
@@ -161,6 +188,7 @@ const getDetailDoctorById = (inputId) => {
                             { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
                             { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
                             { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                            { model: db.Specialty, as: 'specialtyTypeData', attributes: ['name'] }
                         ]
                     }
                     ],
