@@ -134,12 +134,14 @@ const saveDetailInfoDoctor = (inputData) => {
                 else {
                     //create
                     await db.Doctor_Info.create({
+                        clinicId: inputData.clinicId,
                         doctorId: inputData.doctorId,
-                        priceId: inputData.contentHTML,
-                        paymentId: inputData.contentMarkdown,
-                        provinceId: inputData.description,
-                        addressClinic: inputData.doctorId,
-                        nameClinic: inputData.contentMarkdown,
+                        specialtyId: inputData.specialtyId,
+                        priceId: inputData.selectedPrice,
+                        paymentId: inputData.selectedPayment,
+                        provinceId: inputData.selectedProvince,
+                        addressClinic: inputData.selectedAddressClinic,
+                        nameClinic: inputData.selectedNameClinic,
                         note: inputData.description
                     })
                 }
