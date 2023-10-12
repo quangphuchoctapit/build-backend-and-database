@@ -142,7 +142,7 @@ const saveDetailInfoDoctor = (inputData) => {
                         provinceId: inputData.selectedProvince,
                         addressClinic: inputData.selectedAddressClinic,
                         nameClinic: inputData.selectedNameClinic,
-                        note: inputData.description
+                        note: inputData.note
                     })
                 }
 

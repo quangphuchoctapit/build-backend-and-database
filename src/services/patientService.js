@@ -42,7 +42,7 @@ const postBookingAppointment = async (data) => {
                             statusId: 'S1',
                             doctorId: data.doctorId,
                             patientId: user[0].id,
-                            // date: data.date,
+                            date: data.date,
                             timeType: data.timeType,
                             token: token
                         }

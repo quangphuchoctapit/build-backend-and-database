@@ -49,6 +49,54 @@ const getAllSpecialties = () => {
     })
 }
 
+const getDetailSpecialtyById = (id, location) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            if (!id || !location) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing (id) || location'
+                })
+            } else {
+                let data = await db.Specialty.findOne({
+                    where: { id: id },
+                    attributes: ['descriptionHTML', 'descriptionMarkdown', 'name']
+                })
+                if (data) {
+                    let doctorSpecialty = []
+                    if (location === 'ALL') {
+                        doctorSpecialty = await db.Doctor_Info.findAll({
+                            where: {
+                                specialtyId: id
+                            },
+                            attributes: ['provinceId', 'doctorId']
+                        })
+                    }
+                    else {
+                        doctorSpecialty = await db.Doctor_Info.findAll({
+                            where: {
+                                provinceId: location,
+                                specialtyId: id
+                            },
+                            attributes: ['provinceId', 'doctorId']
+                        })
+                    }
+                    data.doctorSpecialty = doctorSpecialty
+
+                } else data = {}
+                resolve({
+                    errCode: 0,
+                    errMessage: `success find a specialty with id = ${id}`,
+                    data: data
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    }))
+}
+
 module.exports = {
-    createNewSpecialty, getAllSpecialties
+    createNewSpecialty, getAllSpecialties,
+    getDetailSpecialtyById
 }
