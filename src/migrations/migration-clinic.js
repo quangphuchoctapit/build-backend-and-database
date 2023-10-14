@@ -4,6 +4,7 @@ module.exports = {
         await queryInterface.createTable('clinics', {
             id: {
                 allowNull: false,
+                autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
@@ -13,11 +14,14 @@ module.exports = {
             address: {
                 type: Sequelize.STRING
             },
-            description: {
+            descriptionHTML: {
+                type: Sequelize.TEXT
+            },
+            descriptionMarkdown: {
                 type: Sequelize.TEXT
             },
             image: {
-                type: Sequelize.STRING
+                type: Sequelize.Sequelize.BLOB('long')
             },
             createdAt: {
                 allowNull: false,
