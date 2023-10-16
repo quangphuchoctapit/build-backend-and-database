@@ -61,42 +61,6 @@ const getAllClinic = () => {
     })
 }
 
-// const getDetailClinicById = (id) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             if (!id) {
-//                 resolve({
-//                     errCode: 1,
-//                     errMessage: 'Missing (id)'
-//                 })
-//             } else {
-//                 let data = await db.Clinic.findOne({
-//                     where: { id: id },
-//                     attributes: ['descriptionHTML', 'descriptionMarkdown', 'name', 'address']
-//                 })
-//                 if (data) {
-//                     let doctorClinic = []
-//                     doctorClinic = await db.Doctor_Info.findAll({
-//                         where: {
-//                             clinicId: id
-//                         },
-//                         attributes: ['doctorId']
-//                     })
-//                     data.doctorClinic = doctorClinic
-
-//                 } else data = {}
-//                 resolve({
-//                     errCode: 0,
-//                     errMessage: `success find a clinic with id = ${id}`,
-//                     data: data
-//                 })
-//             }
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
-
 const getDetailClinicById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {

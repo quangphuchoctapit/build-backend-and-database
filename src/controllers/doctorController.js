@@ -9,6 +9,7 @@ const getTopDoctorHome = async (req, res) => {
         return res.status(200).json(response)
 
     } catch (e) {
+        console.log('what error: ', e)
         return res.status(200).json({
             errCode: -1,
             message: 'error from server...'
