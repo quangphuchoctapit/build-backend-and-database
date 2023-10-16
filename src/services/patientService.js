@@ -13,7 +13,7 @@ const postBookingAppointment = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.email || !data.timeType || !data.doctorId || !data.date
-                || !data.fullName
+                || !data.fullName || !data.address || !data.selectedGender
             ) {
                 resolve({
                     errCode: 1,
@@ -32,7 +32,12 @@ const postBookingAppointment = async (data) => {
                 })
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
-                    roleId: 'R3'
+                    defaults: {
+                        roleId: 'R3',
+                        address: data.address,
+                        gender: data.selectedGender,
+                        firstName: data.fullName
+                    }
                 })
                 if (user && user[0]) {
                     await db.booking.findOrCreate({

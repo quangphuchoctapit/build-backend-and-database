@@ -61,38 +61,75 @@ const getAllClinic = () => {
     })
 }
 
-const getDetailClinicById = (inputId) => {
+// const getDetailClinicById = (id) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             if (!id) {
+//                 resolve({
+//                     errCode: 1,
+//                     errMessage: 'Missing (id)'
+//                 })
+//             } else {
+//                 let data = await db.Clinic.findOne({
+//                     where: { id: id },
+//                     attributes: ['descriptionHTML', 'descriptionMarkdown', 'name', 'address']
+//                 })
+//                 if (data) {
+//                     let doctorClinic = []
+//                     doctorClinic = await db.Doctor_Info.findAll({
+//                         where: {
+//                             clinicId: id
+//                         },
+//                         attributes: ['doctorId']
+//                     })
+//                     data.doctorClinic = doctorClinic
+
+//                 } else data = {}
+//                 resolve({
+//                     errCode: 0,
+//                     errMessage: `success find a clinic with id = ${id}`,
+//                     data: data
+//                 })
+//             }
+//         } catch (e) {
+//             reject(e)
+//         }
+//     })
+// }
+
+const getDetailClinicById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputId) {
+            if (!id) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'missing req.query.id'
+                    errMessage: 'missing param id'
                 })
-            }
-            else {
-                let data = await db.Clinic.findOne({
-                    where: {
-                        id: inputId
-                    },
+            } else {
+                let dataClinic = await db.Clinic.findOne({
+                    where: { id: id },
                     attributes: ['name', 'address', 'descriptionHTML', 'descriptionMarkdown', 'image']
                 })
-                if (data) {
-                    if (data && data.image) {
-                        data.image = new Buffer(data.image, 'base64').toString('binary')
+                if (dataClinic) {
+                    if (dataClinic && dataClinic.image) {
+                        dataClinic.image = new Buffer(dataClinic.image, 'base64').toString('binary')
                     }
-                    resolve({
-                        errCode: 0,
-                        errMessage: `ok success get detail clinicId = ${inputId}`,
-                        data: data
+
+                    let doctorClinic = []
+                    doctorClinic = await db.Doctor_Info.findAll({
+                        where: {
+                            clinicId: id
+                        },
+                        attributes: ['doctorId']
                     })
+                    dataClinic.doctorClinic = doctorClinic
                 }
-                else {
-                    resolve({
-                        errCode: 2,
-                        errMessage: 'failed, no data found'
-                    })
-                }
+                else dataClinic = {}
+                resolve({
+                    errCode: 0,
+                    errMessage: `ok find all doctos with id = ${id}`,
+                    data: dataClinic
+                })
             }
         } catch (e) {
             reject(e)

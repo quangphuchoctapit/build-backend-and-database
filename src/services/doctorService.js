@@ -422,6 +422,49 @@ const getProfileDoctorById = (inputId) => {
     })
 }
 
+const getListPatientForDoctor = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'missing doctorid || date'
+                })
+            } else {
+                let data = await db.booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: doctorId,
+                        date: date
+                    },
+                    include: [
+                        {
+                            model: db.User, as: 'patientData',
+                            attributes: ['email', 'firstName', 'lastName', 'address', 'gender'],
+                            include: [{
+                                model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn']
+                            }]
+                        },
+                        {
+                            model: db.Allcode, as: 'bookingTimeTypeData',
+                            attributes: ['valueVi', 'valueEn']
+                        }
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: 'ok success getlistpatient',
+                    data: data
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome,
     getAllDoctors,
@@ -431,5 +474,6 @@ module.exports = {
     getScheduleById,
     getScheduleDoctorByDate,
     getExtraInfoDoctorById,
-    getProfileDoctorById
+    getProfileDoctorById,
+    getListPatientForDoctor
 }
