@@ -1,4 +1,5 @@
 import db from '../models/index';
+import emailService from '../services/emailService'
 require('dotenv').config()
 import _ from 'lodash'
 
@@ -465,6 +466,43 @@ const getListPatientForDoctor = (doctorId, date) => {
     })
 }
 
+const sendRemedy = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.email || !data.doctorId || !data.patientId || !data.timeType) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'missing param: !data.email || !data.doctorId || !data.patientId || !data.timeType'
+                })
+            }
+            else {
+                let appointment = await db.booking.findOne({
+                    where: {
+                        doctorId: data.doctorId,
+                        patientId: data.patientId,
+                        statusId: 'S2',
+                        timeType: data.timeType
+                    },
+                    raw: false
+                })
+                if (appointment) {
+                    appointment.statusId = 'S3'
+                    await appointment.save()
+                }
+                await emailService.sendAttachment(data)
+                resolve({
+                    errCode: 0,
+                    data: appointment,
+                    dataReal: data,
+                    errMessage: 'ok'
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome,
     getAllDoctors,
@@ -475,5 +513,6 @@ module.exports = {
     getScheduleDoctorByDate,
     getExtraInfoDoctorById,
     getProfileDoctorById,
-    getListPatientForDoctor
+    getListPatientForDoctor,
+    sendRemedy
 }

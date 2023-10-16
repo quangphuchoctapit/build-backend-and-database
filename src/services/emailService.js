@@ -48,6 +48,57 @@ let getBodyHTMLEmail = (dataReceiver) => {
     }
 }
 
+const sendAttachment = async (dataReceiver) => {
+    let transproter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD
+        },
+    })
+    let info = await transproter.sendMail({
+        from: '"TommyLeBookingcare " <thangteo1310@gmail.com> ',
+        to: dataReceiver.email,
+        subject: 'TommyLeBookingcare',
+        text: 'TommyLeBookingcare',
+        html: getBodyHTMLEmailRemedy(dataReceiver),
+        attachments: [
+            {
+                filename: `remedy-${dataReceiver.patientId}-${new Date().getTime()}.png`,
+                content: dataReceiver.image.split("base64,")[1],
+                encoding: 'base64'
+            }
+        ]
+    })
+}
+
+const getBodyHTMLEmailRemedy = (dataReceiver) => {
+    let result = ``
+    if (dataReceiver.language === 'en') {
+        result = `
+        <h2>Dear ${dataReceiver.patientName}</h2>
+        <p>We are happy that you chose tommyle Bookingcare's booking as a place to examine your health.</p>
+        <p>Details of your booking reservation: </p>
+        <h4>Time: ${dataReceiver.timeString}</h4>
+        <p>If the above information is true, please click on the below link to proceed and finish your booking reservation.</p>
+        `
+        return result
+    }
+    if (dataReceiver.language === 'vi') {
+        result = `
+        <h2>Xin chào ${dataReceiver.patientName}</h2>
+        <p>Bạn nhận được email vì đã tin tưởng đặt lịch khám bệnh tại tommyle Bookingcare.</p>
+        <p>Thông tin đặt lịch khám bệnh: </p>
+        <h4>Thời gian: ${dataReceiver.timeString}</h4>
+        <p>Nếu thông tin trên là đúng sự thật, vui lòng click vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám.</p>
+        `
+        return result
+    }
+}
+
 module.exports = {
-    sendSimpleEmail
+    sendSimpleEmail,
+    sendAttachment
 }
